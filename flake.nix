@@ -1,8 +1,15 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
-    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
     systems.url = "github:nix-systems/default";
+    zig-overlay = {
+      url = "github:mitchellh/zig-overlay?ref=pull/78/head";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = {
@@ -10,6 +17,7 @@
     nixpkgs,
     flake-parts,
     systems,
+    zig-overlay,
     ...
   }@inputs: flake-parts.lib.mkFlake { inherit inputs; } {
     systems = import inputs.systems;
@@ -21,6 +29,16 @@
           installSymlinks = false;
         };
       };
+
+      # Replace zip & unzip with ziptools
+      replace-zip-unzip = final: prev: {
+        ziptools = prev.ziptools.override {
+          zig_0_15 = inputs.zig-overlay.packages.${final.system}."0.15.1";
+        };
+
+        zip = final.ziptools;
+        unzip = final.ziptools;
+      };
     };
 
     perSystem = { system, lib, pkgs, ... }: {
@@ -30,6 +48,8 @@
           inputs.self.overlays.default
         ];
       };
+
+      legacyPackages = pkgs.extend inputs.self.overlays.replace-zip-unzip;
 
       packages = {
         default = pkgs.ziptools;
