@@ -8,7 +8,7 @@ stdenv.mkDerivation (finalAttrs: {
   pname = "ziptools";
   version = "0.1.0";
 
-  src = ./.;
+  src = ../.;
 
   nativeBuildInputs = [
     zig_0_15
