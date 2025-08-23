@@ -20,6 +20,8 @@ stdenv.mkDerivation (finalAttrs: {
     ln -s $out/bin/ziptools $out/bin/unzip
   '';
 
+  setupHook = ./setup-hook.sh;
+
   meta = {
     description = "Modern zip & unzip replacements";
     license = lib.licenses.lgpl21Only;
