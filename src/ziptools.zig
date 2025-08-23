@@ -1,4 +1,5 @@
 const std = @import("std");
+const options = @import("options");
 const builtin = @import("builtin");
 const native_os = builtin.os.tag;
 const zip = @import("zip.zig");
@@ -6,14 +7,14 @@ const unzip = @import("unzip.zig");
 
 fn printHelp(writer: *std.Io.Writer) !void {
     try writer.print(
-        \\Ziptools v0.1.0
+        \\Ziptools v{f}
         \\Usage: ziptools CMD [options...]
         \\
         \\Commands:
         \\  unzip - Uncompresses zip archive
         \\  zip   - Compresses zip archive
         \\
-    , .{});
+    , .{options.version});
 }
 
 var debug_allocator: std.heap.DebugAllocator(.{}) = .init;

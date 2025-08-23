@@ -24,7 +24,16 @@
 
     flake.overlays = {
       default = final: prev: {
-        ziptools = final.callPackage ./nix/package.nix {};
+        ziptools = (final.callPackage ./nix/package.nix {}).overrideAttrs (finalAtrs: prevAttrs: {
+          version = "${final.lib.trim (builtins.readFile ./.version)}-git+${self.shortRev or "dirty"}";
+
+          zigBuildFlags = [
+            "-Drev=${self.shortRev or "dirty"}"
+          ];
+
+          __intentionallyOverridingVersion = true;
+        });
+
         ziptools-nosymlinks = final.ziptools.override {
           installSymlinks = false;
         };

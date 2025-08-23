@@ -6,7 +6,7 @@
 }:
 stdenv.mkDerivation (finalAttrs: {
   pname = "ziptools";
-  version = "0.1.0";
+  version = lib.trim (builtins.readFile ../.version);
 
   src = ../.;
 
